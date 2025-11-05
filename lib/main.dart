@@ -15,8 +15,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Lista de Tarefas',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[100], // fundo suave
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blueAccent,
+          elevation: 0,
+        ),
+      ),
       home: const TaskPage(),
     );
   }
@@ -28,60 +36,87 @@ class TaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final taskProvider = Provider.of<TaskProvider>(context);
-
     final TextEditingController controller = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Tarefas')),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+      appBar: AppBar(title: const Text('Minhas Tarefas'), centerTitle: true),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            // Campo de entrada + botão
+            Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: controller,
-                    decoration: const InputDecoration(labelText: 'Nova tarefa'),
+                    decoration: InputDecoration(
+                      hintText: 'Adicionar nova tarefa',
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add),
+                const SizedBox(width: 8),
+                FloatingActionButton(
                   onPressed: () {
                     if (controller.text.isNotEmpty) {
                       taskProvider.addTask(controller.text);
                       controller.clear();
                     }
                   },
+                  mini: true,
+                  child: const Icon(Icons.add),
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: taskProvider.tasks.length,
-              itemBuilder: (context, index) {
-                final task = taskProvider.tasks[index];
-                return ListTile(
-                  title: Text(
-                    task.title,
-                    style: TextStyle(
-                      decoration: task.done ? TextDecoration.lineThrough : null,
+            const SizedBox(height: 16),
+
+            // Lista de tarefas
+            Expanded(
+              child: ListView.builder(
+                itemCount: taskProvider.tasks.length,
+                itemBuilder: (context, index) {
+                  final task = taskProvider.tasks[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                  ),
-                  leading: Checkbox(
-                    value: task.done,
-                    onChanged: (_) => taskProvider.toggleDone(task),
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => taskProvider.deleteTask(task),
-                  ),
-                );
-              },
+                    elevation: 2,
+                    child: ListTile(
+                      leading: Checkbox(
+                        value: task.done,
+                        onChanged: (_) => taskProvider.toggleDone(task),
+                        activeColor: Colors.blueAccent,
+                      ),
+                      title: Text(
+                        task.title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          decoration:
+                              task.done ? TextDecoration.lineThrough : null,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.redAccent),
+                        onPressed: () => taskProvider.deleteTask(task),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
