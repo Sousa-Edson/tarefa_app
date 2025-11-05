@@ -19,9 +19,10 @@ class MyApp extends StatelessWidget {
       title: 'Lista de Tarefas',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[100], // fundo suave
+        scaffoldBackgroundColor: Colors.blueGrey[100], // fundo suave
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: Colors.deepOrange,
+          foregroundColor: Colors.white,
           elevation: 0,
         ),
       ),
